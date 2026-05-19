@@ -1,19 +1,8 @@
-import { useState } from 'react';
 import MemberRow from './MemberRow';
-import AIImport from './AIImport';
 
-export default function Board({ members, tasks, onCreateTask, onUpdateTaskStatus, onDeleteTask, onRefresh }) {
-  const [showAI, setShowAI] = useState(false);
-
+export default function Board({ members, tasks, onCreateTask, onUpdateTaskStatus, onDeleteTask }) {
   return (
     <div className="board">
-      <div className="board-header">
-        <div />
-        <button className="btn btn-lg btn-blue" onClick={() => setShowAI(true)} id="btn-ai-import">
-          ✦ Importar con IA
-        </button>
-      </div>
-
       <div className="board-columns-header">
         <div className="column-label">&nbsp;</div>
         <div className="column-label doing">En progreso</div>
@@ -38,13 +27,6 @@ export default function Board({ members, tasks, onCreateTask, onUpdateTaskStatus
             />
           );
         })
-      )}
-
-      {showAI && (
-        <AIImport
-          onClose={() => setShowAI(false)}
-          onRefresh={onRefresh}
-        />
       )}
     </div>
   );

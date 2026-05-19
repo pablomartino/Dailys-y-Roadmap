@@ -111,7 +111,6 @@ export default function App() {
           onCreateTask={handleCreateTask}
           onUpdateTaskStatus={handleUpdateTaskStatus}
           onDeleteTask={handleDeleteTask}
-          onRefresh={fetchData}
         />
       ) : (
         <Team

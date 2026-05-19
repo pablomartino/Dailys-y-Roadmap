@@ -28,7 +28,3 @@ export const updateTaskStatus = (id, data) =>
   request(`/api/tasks/${id}/status`, { method: 'PATCH', body: JSON.stringify(data) });
 export const deleteTask = (id) =>
   request(`/api/tasks/${id}`, { method: 'DELETE' });
-
-// AI
-export const extractAI = (text) =>
-  request('/api/ai/extract', { method: 'POST', body: JSON.stringify({ text }) });
