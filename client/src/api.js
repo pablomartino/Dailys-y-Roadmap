@@ -28,3 +28,14 @@ export const updateTaskStatus = (id, data) =>
   request(`/api/tasks/${id}/status`, { method: 'PATCH', body: JSON.stringify(data) });
 export const deleteTask = (id) =>
   request(`/api/tasks/${id}`, { method: 'DELETE' });
+
+// Projects
+export const getProjects = () => request('/api/projects');
+export const createProject = (data) =>
+  request('/api/projects', { method: 'POST', body: JSON.stringify(data) });
+export const updateProject = (id, data) =>
+  request(`/api/projects/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+export const updateProjectPriority = (id, direction) =>
+  request(`/api/projects/${id}/priority`, { method: 'PATCH', body: JSON.stringify({ direction }) });
+export const deleteProject = (id) =>
+  request(`/api/projects/${id}`, { method: 'DELETE' });

@@ -35,3 +35,23 @@ CREATE TABLE IF NOT EXISTS tasks (
 -- Indexes
 CREATE INDEX IF NOT EXISTS idx_tasks_member_id ON tasks(member_id);
 CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
+
+-- Project status enum
+DO $$ BEGIN
+  CREATE TYPE project_status AS ENUM ('planned', 'in_progress', 'done');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+
+-- Projects table
+CREATE TABLE IF NOT EXISTS projects (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(200) NOT NULL,
+  description TEXT,
+  status project_status NOT NULL DEFAULT 'planned',
+  member_id UUID REFERENCES members(id) ON DELETE SET NULL,
+  priority_order INT NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_projects_priority ON projects(priority_order);

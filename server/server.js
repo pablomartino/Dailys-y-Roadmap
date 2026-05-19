@@ -6,6 +6,7 @@ const { initDB } = require('./db');
 
 const membersRouter = require('./routes/members');
 const tasksRouter = require('./routes/tasks');
+const projectsRouter = require('./routes/projects');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -21,6 +22,7 @@ app.use(express.json());
 // Routes
 app.use('/api/members', membersRouter);
 app.use('/api/tasks', tasksRouter);
+app.use('/api/projects', projectsRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

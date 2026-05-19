@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import Board from './components/Board';
 import Team from './components/Team';
-import { getMembers, getTasks, createMember, deleteMember, createTask, updateTaskStatus, deleteTask } from './api';
+import Roadmap from './components/Roadmap';
+import { getMembers, getTasks, createMember, deleteMember, createTask, updateTaskStatus, deleteTask, getProjects, createProject, updateProject, updateProjectPriority, deleteProject } from './api';
 
 function getSpanishDate() {
   const now = new Date();
@@ -16,13 +17,15 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('board');
   const [members, setMembers] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     try {
-      const [m, t] = await Promise.all([getMembers(), getTasks()]);
+      const [m, t, p] = await Promise.all([getMembers(), getTasks(), getProjects()]);
       setMembers(m);
       setTasks(t);
+      setProjects(p);
     } catch (err) {
       console.error('Error fetching data:', err);
     } finally {
@@ -67,6 +70,28 @@ export default function App() {
     setTasks((prev) => prev.filter((t) => t.id !== id));
   };
 
+  // Project actions
+  const handleCreateProject = async (data) => {
+    const project = await createProject(data);
+    setProjects((prev) => [...prev, project]);
+  };
+
+  const handleUpdateProject = async (id, data) => {
+    const updated = await updateProject(id, data);
+    setProjects((prev) => prev.map((p) => (p.id === id ? { ...updated, member_name: data.member_name, member_color_index: data.member_color_index } : p)));
+    await getProjects().then(setProjects);
+  };
+
+  const handleUpdatePriority = async (id, direction) => {
+    const updated = await updateProjectPriority(id, direction);
+    setProjects(updated);
+  };
+
+  const handleDeleteProject = async (id) => {
+    await deleteProject(id);
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+  };
+
   const blockedCount = tasks.filter((t) => t.status === 'blocked').length;
 
   if (loading) {
@@ -99,12 +124,19 @@ export default function App() {
             >
               Equipo
             </button>
+            <button
+              id="tab-roadmap"
+              className={`tab ${activeTab === 'roadmap' ? 'active' : ''}`}
+              onClick={() => setActiveTab('roadmap')}
+            >
+              Roadmap
+            </button>
           </nav>
         </div>
         <span className="header-date">{getSpanishDate()}</span>
       </header>
 
-      {activeTab === 'board' ? (
+      {activeTab === 'board' && (
         <Board
           members={members}
           tasks={tasks}
@@ -112,12 +144,23 @@ export default function App() {
           onUpdateTaskStatus={handleUpdateTaskStatus}
           onDeleteTask={handleDeleteTask}
         />
-      ) : (
+      )}
+      {activeTab === 'team' && (
         <Team
           members={members}
           tasks={tasks}
           onCreateMember={handleCreateMember}
           onDeleteMember={handleDeleteMember}
+        />
+      )}
+      {activeTab === 'roadmap' && (
+        <Roadmap
+          projects={projects}
+          members={members}
+          onCreateProject={handleCreateProject}
+          onUpdateProject={handleUpdateProject}
+          onUpdatePriority={handleUpdatePriority}
+          onDeleteProject={handleDeleteProject}
         />
       )}
     </>
